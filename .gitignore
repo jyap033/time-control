@@ -1,0 +1,29 @@
+# Xcode / Swift
+*.xcodeproj
+!project.yml
+xcuserdata/
+*.xcworkspace
+!default.xcworkspace
+DerivedData/
+build/
+.build/
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# SwiftPM
+.swiftpm/
+
+# macOS
+.DS_Store
+
+# Fastlane / secrets
+**/*.p12
+**/*.mobileprovision
+ExportOptions.plist

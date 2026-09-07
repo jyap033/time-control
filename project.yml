@@ -1,0 +1,96 @@
+name: TimeControl
+
+# ─────────────────────────────────────────────────────────────────────────────
+# TimeControl — an Opal-style time-management / app-blocking app.
+#
+# This file is the source of truth for the Xcode project. Regenerate the
+# .xcodeproj on your Mac with:   xcodegen generate    (see README.md)
+#
+# CHANGE THESE THREE THINGS before building:
+#   1. DEVELOPMENT_TEAM below  -> your 10-char Apple Developer Team ID
+#   2. The bundle IDs (com.example.timecontrol...) -> your own reverse-domain id
+#   3. The App Group in the .entitlements files + Shared/SharedConstants.swift
+# ─────────────────────────────────────────────────────────────────────────────
+
+options:
+  bundleIdPrefix: com.example
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    SWIFT_VERSION: "5.9"
+    CODE_SIGN_STYLE: Automatic
+    # TODO: set your Apple Developer Team ID (Xcode > Settings > Accounts).
+    DEVELOPMENT_TEAM: ""
+    TARGETED_DEVICE_FAMILY: "1"   # iPhone
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+
+targets:
+
+  TimeControl:
+    type: application
+    platform: iOS
+    sources:
+      - Sources/App
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol
+        INFOPLIST_FILE: Sources/App/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/App/TimeControl.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+        ENABLE_PREVIEWS: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+    dependencies:
+      - target: DeviceActivityMonitorExtension
+      - target: ShieldConfiguration
+      - target: ShieldAction
+
+  DeviceActivityMonitorExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - Sources/Monitor
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol.monitor
+        INFOPLIST_FILE: Sources/Monitor/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/Monitor/Monitor.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+
+  ShieldConfiguration:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Sources/Shield/ShieldConfigurationExtension.swift
+      - path: Sources/Shield/ShieldConfigInfo.plist
+        buildPhase: none
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol.shieldconfig
+        INFOPLIST_FILE: Sources/Shield/ShieldConfigInfo.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/Shield/Shield.entitlements
+        GENERATE_INFOPLIST_FILE: NO
+
+  ShieldAction:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: Sources/Shield/ShieldActionExtension.swift
+      - path: Sources/Shield/ShieldActionInfo.plist
+        buildPhase: none
+      - Shared
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol.shieldaction
+        INFOPLIST_FILE: Sources/Shield/ShieldActionInfo.plist
+        CODE_SIGN_ENTITLEMENTS: Sources/Shield/Shield.entitlements
+        GENERATE_INFOPLIST_FILE: NO
