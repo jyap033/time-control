@@ -89,6 +89,23 @@ struct ActiveSession: Codable, Equatable {
     var isFinished: Bool { Date() >= endDate }
 }
 
+/// Configuration for scheduled "guilt" notifications (works without any
+/// Screen Time entitlement — these are ordinary local notifications).
+struct NudgeConfig: Codable, Equatable {
+    var enabled: Bool = false
+    /// Times of day to fire, stored as minutes-since-midnight (0...1439).
+    var minutesOfDay: [Int] = [12 * 60, 15 * 60, 21 * 60] // noon, 3pm, 9pm
+
+    static let `default` = NudgeConfig()
+}
+
+extension Int {
+    /// Formats a minutes-since-midnight value as "HH:mm".
+    var asClockString: String {
+        String(format: "%02d:%02d", self / 60, self % 60)
+    }
+}
+
 extension Array {
     subscript(safe index: Int) -> Element? {
         indices.contains(index) ? self[index] : nil

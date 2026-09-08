@@ -94,6 +94,36 @@ Key frameworks:
   no unblock path, so the block holds until the window ends.
 - **Stats & streaks** — computed from the app's own session history (fully reliable,
   no extra entitlement needed).
+- **Guilt nudges** — scheduled local notifications with rotating tough-love messages
+  ("You are wasting your life"). No entitlement needed; fire even when the app is
+  closed. Configured under Settings → Nudges.
+- **Free "block on open" intervention** — see below.
+
+---
+
+## Nudges & the free intervention (no paid account needed)
+
+Two features work **without** the Family Controls entitlement, so they're useful
+even before you set up signing:
+
+**1. Scheduled guilt nudges.** Settings → Nudges → turn on and pick times. The app
+fires ordinary local notifications with rotating messages from
+`Shared/NudgeMessages.swift` (edit them to taste).
+
+**2. Opal-style "you opened it" intervention via Shortcuts.** A normal app can't see
+which app you open, but iOS **Shortcuts automations** can — for free. TimeControl
+listens on the `timecontrol://intervene` URL and, when opened that way, shows a
+full-screen intervention (with a 10-second delay on the "continue anyway" button).
+
+Set it up on your phone:
+
+1. Open the **Shortcuts** app → **Automation** tab → **＋** → **App**.
+2. Choose **Is Opened**, pick the distracting apps (Instagram, TikTok, …), **Next**.
+3. **New Blank Automation** → add action **Open URLs** → enter `timecontrol://intervene`.
+4. Turn **off** *"Ask Before Running"* so it fires silently.
+
+Now opening a chosen app bounces you into TimeControl's guilt screen first. It's a
+speed bump, not a hard block — but that friction is most of what Opal's nudges do.
 
 ---
 

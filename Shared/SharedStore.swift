@@ -78,4 +78,15 @@ enum SharedStore {
         get { defaults.bool(forKey: StorageKey.onboardingDone) }
         set { defaults.set(newValue, forKey: StorageKey.onboardingDone) }
     }
+
+    static func loadNudgeConfig() -> NudgeConfig {
+        guard let data = defaults.data(forKey: StorageKey.nudgeConfig),
+              let decoded = try? decoder.decode(NudgeConfig.self, from: data)
+        else { return .default }
+        return decoded
+    }
+
+    static func saveNudgeConfig(_ config: NudgeConfig) {
+        defaults.set(try? encoder.encode(config), forKey: StorageKey.nudgeConfig)
+    }
 }

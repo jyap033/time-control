@@ -3,6 +3,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject private var appState: AppState
     @EnvironmentObject private var auth: AuthorizationManager
+    @EnvironmentObject private var nudges: NudgeManager
 
     var body: some View {
         NavigationStack {
@@ -16,6 +17,19 @@ struct SettingsView: View {
                     }
                 } footer: {
                     Text("New focus sessions start with strict mode on, so they can't be ended early.")
+                }
+
+                Section("Nudges & interventions") {
+                    NavigationLink {
+                        NudgesView()
+                    } label: {
+                        HStack {
+                            Label("Guilt nudges", systemImage: "bell.badge")
+                            Spacer()
+                            Text(nudges.config.enabled ? "On" : "Off")
+                                .foregroundStyle(.secondary)
+                        }
+                    }
                 }
 
                 Section("Screen Time") {

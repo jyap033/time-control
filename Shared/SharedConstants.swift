@@ -21,6 +21,7 @@ enum StorageKey {
     static let strictMode = "tc.strictMode"
     static let onboardingDone = "tc.onboardingDone"
     static let lifetimeSavedMinutes = "tc.lifetimeSavedMinutes"
+    static let nudgeConfig = "tc.nudgeConfig"
 
     /// Per-activity encoded `FamilyActivitySelection`, keyed by DeviceActivityName.
     static func selection(for activityName: String) -> String {

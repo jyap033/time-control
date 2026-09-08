@@ -3,6 +3,7 @@ import Combine
 import FamilyControls
 import DeviceActivity
 import ManagedSettings
+import UserNotifications
 
 /// One day's total focused minutes, for the stats chart.
 struct DayStat: Identifiable {
@@ -59,8 +60,22 @@ final class AppState: ObservableObject {
         )
         try? center.startMonitoring(DeviceActivityName(ActivityID.focusSession), during: schedule)
 
+        scheduleSessionEndNotification(in: TimeInterval(minutes * 60), reclaimedMinutes: minutes)
+
         activeSession = session
         startTicking()
+    }
+
+    private func scheduleSessionEndNotification(in seconds: TimeInterval, reclaimedMinutes: Int) {
+        guard seconds > 0 else { return }
+        let content = UNMutableNotificationContent()
+        content.title = "Focus session complete"
+        content.body = "Nice. You reclaimed \(reclaimedMinutes) minutes. Keep the streak alive."
+        content.sound = .default
+        let trigger = UNTimeIntervalNotificationTrigger(timeInterval: seconds, repeats: false)
+        UNUserNotificationCenter.current().add(
+            UNNotificationRequest(identifier: "tc.session.end", content: content, trigger: trigger)
+        )
     }
 
     /// End the running session. `completed` = ran to the end vs. user stopped early.
@@ -68,6 +83,7 @@ final class AppState: ObservableObject {
         guard let active = activeSession else { return }
         center.stopMonitoring([DeviceActivityName(ActivityID.focusSession)])
         ShieldController.clear(storeName: ManagedSettingsStore.Name(ActivityID.focusSession))
+        UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: ["tc.session.end"])
 
         let record = SessionRecord(
             id: active.id,
