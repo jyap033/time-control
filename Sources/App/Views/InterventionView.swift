@@ -48,6 +48,10 @@ final class InterventionCoordinator: ObservableObject {
     private let burstWindow: TimeInterval = 6
     /// Cap on echo reopens so we can never loop forever.
     private let maxBurst = 3
+    /// Small deliberate delay before reopening. Lets the automation's re-trigger
+    /// settle first, so the reopen "sticks" more reliably (mimics the timing shift
+    /// you get from running a second automation alongside this one).
+    private let reopenDelay: TimeInterval = 0.4
 
     /// Entry point from `onOpenURL`.
     func handleIntervene(returnURL: URL?) {
@@ -96,7 +100,11 @@ final class InterventionCoordinator: ObservableObject {
         guard let url = returnURL else { return }
         lastReopen = Date()
         burstCount += 1
-        UIApplication.shared.open(url)
+        // Wait a beat so the automation's re-trigger fires and settles before we
+        // reopen, rather than racing it head-on.
+        DispatchQueue.main.asyncAfter(deadline: .now() + reopenDelay) {
+            UIApplication.shared.open(url)
+        }
     }
 
     private func pickMessage() {
