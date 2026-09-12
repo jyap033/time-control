@@ -36,10 +36,10 @@ struct BlockSchedule: Codable, Identifiable, Equatable {
     }
 
     func startComponents(weekday: Int) -> DateComponents {
-        DateComponents(weekday: weekday, hour: startHour, minute: startMinute)
+        DateComponents(hour: startHour, minute: startMinute, weekday: weekday)
     }
     func endComponents(weekday: Int) -> DateComponents {
-        DateComponents(weekday: weekday, hour: endHour, minute: endMinute)
+        DateComponents(hour: endHour, minute: endMinute, weekday: weekday)
     }
 
     var timeRangeText: String {
