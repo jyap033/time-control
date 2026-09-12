@@ -38,43 +38,64 @@ final class InterventionCoordinator: ObservableObject {
     private var returnURL: URL?
     /// After "Continue", let the user back in without nagging for a short window.
     private var graceUntil: Date?
-    /// Ignore the echo trigger caused by us programmatically reopening the app.
+    /// When we last programmatically reopened the app.
     private var lastReopen: Date?
+    /// How many times we've reopened in the current rapid burst.
+    private var burstCount = 0
 
     private let graceDuration: TimeInterval = 3 * 60
-    private let antiFlicker: TimeInterval = 4
+    /// Reopens closer together than this are treated as automation echoes.
+    private let burstWindow: TimeInterval = 6
+    /// Cap on echo reopens so we can never loop forever.
+    private let maxBurst = 3
 
     /// Entry point from `onOpenURL`.
     func handleIntervene(returnURL: URL?) {
         self.returnURL = returnURL
+        let now = Date()
+        let graceActive = graceUntil.map { now < $0 } ?? false
 
-        // The reopen we just did re-fired the automation — swallow it.
-        if let last = lastReopen, Date().timeIntervalSince(last) < antiFlicker {
+        if graceActive {
+            let sinceReopen = lastReopen.map { now.timeIntervalSince($0) } ?? .infinity
+            if sinceReopen < burstWindow {
+                // Rapid re-fire caused by our own reopen. Keep pushing back into
+                // the app until iOS settles, but stop after maxBurst so a stubborn
+                // OS can't trap us in an infinite flicker.
+                if burstCount < maxBurst {
+                    reopenApp()
+                }
+                // else: give up silently — stay in TimeControl, no loop.
+            } else {
+                // A genuine reopen within the grace window — let them straight in.
+                burstCount = 0
+                reopenApp()
+            }
             return
         }
-        // Still inside the grace window: let them straight through, no screen.
-        if let until = graceUntil, Date() < until {
-            reopenApp()
-            return
-        }
+
+        // No grace: confront.
+        burstCount = 0
         pickMessage()
         isPresented = true
     }
 
     func continueAnyway() {
         graceUntil = Date().addingTimeInterval(graceDuration)
+        burstCount = 0
         isPresented = false
         reopenApp()
     }
 
     func stop() {
         isPresented = false
+        graceUntil = nil
         // No grace, no reopen — the user stays out.
     }
 
     private func reopenApp() {
         guard let url = returnURL else { return }
         lastReopen = Date()
+        burstCount += 1
         UIApplication.shared.open(url)
     }
 
