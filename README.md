@@ -134,15 +134,20 @@ app you open, but iOS **Shortcuts automations** can — for free.
 
 **Recommended: the guilt-notification automation.** The automation shows a random
 guilt message the instant you open a distracting app, then the app opens normally.
-Reliable, no loop, never traps you. One automation can cover every app:
+Reliable, no loop, never traps you. One automation can cover every app.
+
+TimeControl exposes a **"Random Guilt Message"** action to Shortcuts (via App
+Intents), so the message pool stays in the app and the setup is just two actions:
 
 1. **Shortcuts → Automation → ＋ → App → Is Opened**, pick **all** the apps,
    **Run Immediately → Next**.
-2. **New Blank Automation**, then add these actions in order:
-   - **Text** — paste guilt messages, one per line.
-   - **Split Text** — separator **New Lines**.
-   - **Get Random Item from List**.
-   - **Show Notification** — set the text to the **Random Item** variable.
+2. **New Blank Automation**, then add:
+   - **Random Guilt Message** (search "TimeControl" or "Guilt") — returns a random
+     line from the app's 100+ pool.
+   - **Show Notification** — set the text to that action's **Guilt Message** result.
+
+> No message list to maintain in the shortcut — edit `Shared/NudgeMessages.swift`
+> and rebuild, and the action serves the new lines.
 
 > Why not a full-screen takeover that also lets you continue? Because iOS
 > **re-triggers the automation every time the app reopens** — including when an app

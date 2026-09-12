@@ -137,6 +137,10 @@ enum NudgeMessages {
         "Your future self is watching. Make them proud.",
     ]
 
+    /// Every message, for the widest possible variety (used by the Shortcuts action).
+    static var all: [String] { notifications + interventions }
+
     static var randomNotification: String { notifications.randomElement() ?? notifications[0] }
     static var randomIntervention: String { interventions.randomElement() ?? interventions[0] }
+    static var randomAny: String { all.randomElement() ?? "You are wasting your life." }
 }

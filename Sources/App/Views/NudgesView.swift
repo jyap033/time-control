@@ -52,7 +52,10 @@ struct NudgesView: View {
                 Text("A Shortcuts automation that shows a random guilt message the moment you open a distracting app — reliably, with no loop. The app still opens; this is a nag, not a wall.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                Text("Shortcuts → Automation → New → \"App\" → Is Opened → pick ALL the apps → Run Immediately → New Blank Automation, then add these actions: Text (paste guilt messages, one per line) → Split Text (by New Lines) → Get Random Item from List → Show Notification (use the Random Item).")
+                Text("TimeControl adds a \"Random Guilt Message\" action to Shortcuts, so the setup is just two actions: Shortcuts → Automation → New → \"App\" → Is Opened → pick ALL the apps → Run Immediately → New Blank Automation → add \"Random Guilt Message\" → then \"Show Notification\" using that action's result.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                Text("The message pool lives in the app (100+ lines), so you never paste text into the shortcut.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }
