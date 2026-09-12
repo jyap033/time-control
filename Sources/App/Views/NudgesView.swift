@@ -48,20 +48,17 @@ struct NudgesView: View {
                 }
             }
 
-            Section("Block-on-open, without the paid account") {
-                Text("iOS can open TimeControl automatically when you launch a distracting app — no developer account needed — using a Shortcuts automation. TimeControl throws up a full-screen intervention; \"Continue anyway\" sends you back into the app with a short grace window.")
+            Section("On-open guilt nudge (recommended)") {
+                Text("A Shortcuts automation that shows a random guilt message the moment you open a distracting app — reliably, with no loop. The app still opens; this is a nag, not a wall.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                Text("Make ONE automation per app: Shortcuts → Automation → New → \"App\" → Is Opened → pick ONE app → Run Immediately → New Blank Automation → \"Open URLs\" → enter the address below for that app.")
+                Text("Shortcuts → Automation → New → \"App\" → Is Opened → pick ALL the apps → Run Immediately → New Blank Automation, then add these actions: Text (paste guilt messages, one per line) → Split Text (by New Lines) → Get Random Item from List → Show Notification (use the Random Item).")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("timecontrol://intervene?app=instagram").font(.footnote.monospaced())
-                    Text("timecontrol://intervene?app=tiktok").font(.footnote.monospaced())
-                    Text("timecontrol://intervene?app=youtube").font(.footnote.monospaced())
-                }
-                .foregroundStyle(.secondary)
-                Text("Built-in app names: instagram, tiktok, youtube, twitter/x, facebook, reddit, snapchat, netflix, twitch, linkedin, pinterest. For anything else use ?url=<its-scheme> (e.g. ?url=whatsapp://).")
+            }
+
+            Section("Hard block (optional, full-screen)") {
+                Text("Prefer a wall over a nag? Point the automation at Open URLs → timecontrol://intervene instead. It shows TimeControl's full-screen screen — but because iOS re-triggers the automation, you can only get back into the app by turning the automation off. Use it as a real barrier, not a soft continue.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

@@ -129,31 +129,33 @@ even before you set up signing:
 fires ordinary local notifications with rotating messages from
 `Shared/NudgeMessages.swift` (edit them to taste).
 
-**2. Opal-style "you opened it" intervention via Shortcuts.** A normal app can't see
-which app you open, but iOS **Shortcuts automations** can — for free. TimeControl
-listens on `timecontrol://intervene?app=<name>` and, when opened that way, shows a
-full-screen intervention (10-second delay on "Continue anyway"). Choosing
-"Continue anyway" sends you back into the app and opens a 3-minute grace window so
-you aren't immediately re-trapped; "I'll stop" leaves you out.
+**2. Opal-style "you opened it" nudge via Shortcuts.** A normal app can't see which
+app you open, but iOS **Shortcuts automations** can — for free.
 
-Set it up on your phone — **one automation per app** (the URL names the app so
-TimeControl can return you to it):
+**Recommended: the guilt-notification automation.** The automation shows a random
+guilt message the instant you open a distracting app, then the app opens normally.
+Reliable, no loop, never traps you. One automation can cover every app:
 
-1. Open the **Shortcuts** app → **Automation** tab → **＋** → **App**.
-2. Choose **Is Opened**, pick **one** app (e.g. Instagram), **Run Immediately**, **Next**.
-3. **New Blank Automation** → add action **Open URLs** → enter
-   `timecontrol://intervene?app=instagram`.
-4. Repeat for each app with its own name: `?app=tiktok`, `?app=youtube`, etc.
+1. **Shortcuts → Automation → ＋ → App → Is Opened**, pick **all** the apps,
+   **Run Immediately → Next**.
+2. **New Blank Automation**, then add these actions in order:
+   - **Text** — paste guilt messages, one per line.
+   - **Split Text** — separator **New Lines**.
+   - **Get Random Item from List**.
+   - **Show Notification** — set the text to the **Random Item** variable.
 
-Built-in names: `instagram, tiktok, youtube, twitter/x, facebook, reddit, snapchat,
-netflix, twitch, linkedin, pinterest`. For any other app use `?url=<its-scheme>`
-(e.g. `timecontrol://intervene?url=whatsapp://`).
+> Why not a full-screen takeover that also lets you continue? Because iOS
+> **re-triggers the automation every time the app reopens** — including when an app
+> reopens it programmatically — so a "show screen then return you" flow bounces
+> back in a loop. The notification nudge sidesteps that entirely.
 
-> **If you ever get stuck in a loop:** open **Shortcuts → Automation**, tap the
-> automation, and toggle **Enable This Automation** off (or delete it).
+**Optional hard block.** If you want a wall instead of a nag, point the automation
+at **Open URLs → `timecontrol://intervene`**. TimeControl shows its full-screen
+screen; but because of the re-trigger behavior above, the only way back into the
+app is to turn the automation off. Use it as a deliberate barrier.
 
-It's a speed bump, not a hard block — but that friction is most of what Opal's
-nudges do.
+> **Stuck in a loop with the hard-block URL?** **Shortcuts → Automation**, tap the
+> automation, toggle **Enable This Automation** off (or delete it).
 
 ---
 
