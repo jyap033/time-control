@@ -8,7 +8,12 @@ final class InterventionCoordinator: ObservableObject {
     @Published var message = NudgeMessages.randomIntervention
 
     func trigger() {
-        message = NudgeMessages.randomIntervention
+        var next = NudgeMessages.randomIntervention
+        // Avoid showing the same message twice in a row.
+        if NudgeMessages.interventions.count > 1 {
+            while next == message { next = NudgeMessages.randomIntervention }
+        }
+        message = next
         isPresented = true
     }
 }
