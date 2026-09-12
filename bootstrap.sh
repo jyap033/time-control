@@ -22,9 +22,11 @@ open TimeControl.xcodeproj
 
 cat <<'NOTE'
 
-Next steps in Xcode:
-  1. Select each target > Signing & Capabilities > pick your Team.
-  2. Make the bundle identifiers unique (Product > every target). See README.
+Next steps in Xcode (free build):
+  1. Select the TimeControl target > Signing & Capabilities > pick your Team
+     (a free Apple ID works for this build).
+  2. If signing says the bundle id is taken, change PRODUCT_BUNDLE_IDENTIFIER in
+     project.yml to something unique, then re-run this script.
   3. Plug in your iPhone, select it as the run destination, and press Run (Cmd+R).
 
 NOTE

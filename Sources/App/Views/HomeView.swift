@@ -27,6 +27,14 @@ struct HomeView: View {
 
     private var setupForm: some View {
         Form {
+            #if FREE_TIER
+            Section {
+                Label("Timer mode", systemImage: "hourglass")
+                    .font(.headline)
+            } footer: {
+                Text("This build runs a focus timer and fires guilt notifications. To actually block apps, set up the Shortcuts automation in Settings → Nudges, or enroll in the paid Apple Developer Program for real in-app blocking.")
+            }
+            #else
             Section("Apps to block") {
                 Button {
                     showPicker = true
@@ -39,6 +47,7 @@ struct HomeView: View {
                     }
                 }
             }
+            #endif
 
             Section("Duration") {
                 Picker("Length", selection: $minutes) {
@@ -71,16 +80,22 @@ struct HomeView: View {
                 }
                 .buttonStyle(.borderedProminent)
                 .listRowInsets(EdgeInsets())
+                #if !FREE_TIER
                 .disabled(selection.itemCount == 0)
+                #endif
             } footer: {
+                #if !FREE_TIER
                 if selection.itemCount == 0 {
                     Text("Select at least one app or category to block.")
                 }
+                #endif
             }
         }
+        #if !FREE_TIER
         .sheet(isPresented: $showPicker) {
             AppPickerView(selection: $selection)
         }
+        #endif
     }
 
     private func durationLabel(_ m: Int) -> String {

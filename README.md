@@ -1,31 +1,36 @@
 # TimeControl
 
-An Opal-style time-management app for iPhone. Block distracting apps on demand or
-on a schedule, run focus sessions with a strict mode you can't cheat, and track
-your streaks — all on-device using Apple's Screen Time API.
+An Opal-style time-management app for iPhone. Focus sessions with a strict mode,
+guilt-trip notifications, a Shortcuts-driven "you opened it" intervention, and
+streak tracking. A full app-blocking build is included behind a flag.
 
-Built with SwiftUI + FamilyControls / ManagedSettings / DeviceActivity.
-
----
-
-## ⚠️ Read this first: what you need
-
-This app uses Apple's **Screen Time (Family Controls) API**, which has hard
-requirements that a normal app doesn't:
-
-| Requirement | Why |
-|---|---|
-| **A Mac with Xcode 15+** | iOS apps can only be compiled and signed on macOS. |
-| **A paid Apple Developer account** ($99/yr) | The Family Controls capability and App Groups are **not** available with a free Apple ID. Without the paid account the app will build but blocking won't work. |
-| **A real iPhone (iOS 16+)** | Family Controls does not function on the Simulator. |
-
-> The Family Controls **Development** entitlement is enabled automatically when you
-> add the capability with a paid account. You only need to request special approval
-> from Apple if you later distribute on the App Store.
+Built with SwiftUI (+ FamilyControls / ManagedSettings / DeviceActivity in the
+paid build).
 
 ---
 
-## Quick start
+## ⚠️ Two builds — pick based on your Apple account
+
+Apple only allows the app-blocking capability (**Family Controls**) and **App
+Groups** on a **paid** Developer account. A free Apple ID ("Personal Team") gets a
+`Cannot create a provisioning profile … Personal development teams do not support
+the Family Controls (Development) capability` error. So there are two builds:
+
+| Build | Account needed | What you get |
+|---|---|---|
+| **Free build** (current default) | Free Apple ID | Focus timer, guilt notifications, Shortcuts "open app → full-screen intervention", stats/streaks. **No in-app blocking.** |
+| **Full build** | Paid Developer Program ($99/yr) | Everything above **plus** real on-demand + scheduled app blocking via the Screen Time API. |
+
+Both need **a Mac with Xcode 15+** and **a real iPhone (iOS 16+)** — Family
+Controls doesn't run on the Simulator.
+
+The free build is what `project.yml` produces right now (it defines the
+`FREE_TIER` compile flag and drops the entitlement + extensions). To switch to the
+full build, see *Upgrading to the full blocking build* below.
+
+---
+
+## Quick start (free build)
 
 ```bash
 git clone <this-repo>
@@ -35,31 +40,45 @@ cd time-control
 
 Then in Xcode:
 
-1. **Signing** — for **each** of the four targets (`TimeControl`,
-   `DeviceActivityMonitorExtension`, `ShieldConfiguration`, `ShieldAction`):
-   go to *Signing & Capabilities* and select your **Team**.
-2. **Bundle IDs** — change them to your own reverse-domain prefix (see below).
+1. **Signing** — select the **TimeControl** target → *Signing & Capabilities* →
+   check *Automatically manage signing* → pick your **Team** (your free Apple ID
+   is fine).
+2. **Bundle ID** — if signing says the identifier is taken, change
+   `PRODUCT_BUNDLE_IDENTIFIER` in `project.yml` to something unique
+   (e.g. `com.<yourname>.timecontrol`) and re-run `./bootstrap.sh`.
 3. Plug in your iPhone, choose it as the run destination, press **⌘R**.
-4. On the device, approve the *"...would like to access Screen Time"* prompt, then
-   trust the developer profile under *Settings → General → VPN & Device Management*.
+4. First launch on the device: *Settings → General → VPN & Device Management* →
+   trust your developer profile. Grant notification permission when asked (needed
+   for guilt nudges).
+
+Then set up the Shortcuts intervention (see below) to get blocked-on-open behavior
+without the paid account.
 
 ---
 
-## Changing the bundle identifier & App Group
+## Upgrading to the full blocking build
 
-The placeholder is `com.example.timecontrol`. Replace `com.example` with your own
-domain in **three places** (all must stay consistent):
+The blocking code (the three extensions + entitlements) is still in the repo. Once
+you're in the paid Apple Developer Program, turn it back on:
 
-1. **`project.yml`** — the `PRODUCT_BUNDLE_IDENTIFIER` of all four targets, and
-   `DEVELOPMENT_TEAM`. Re-run `xcodegen generate` after editing.
-2. **`Shared/SharedConstants.swift`** — `AppGroup.identifier`
-   (`group.com.example.timecontrol`).
-3. **The three `.entitlements` files** — `Sources/App/TimeControl.entitlements`,
-   `Sources/Monitor/Monitor.entitlements`, `Sources/Shield/Shield.entitlements` —
-   update the `application-groups` string.
+1. In `project.yml`, **remove** `SWIFT_ACTIVE_COMPILATION_CONDITIONS: FREE_TIER`
+   from the app target.
+2. Re-add the extension targets and the app's `CODE_SIGN_ENTITLEMENTS` /
+   `application-groups`. The previous full spec is in this file's git history
+   (before the free-build switch) — restore those `targets:` and the app's
+   `INFOPLIST_FILE`/entitlement settings.
+3. Re-run `xcodegen generate`, set your (paid) Team on all four targets, and build.
 
-The extension bundle IDs must remain **prefixed by the app's** bundle ID
-(e.g. app `com.you.timecontrol`, monitor `com.you.timecontrol.monitor`).
+The `#if FREE_TIER` guards in the Swift sources already gate the auth flow and the
+blocking-only UI, so flipping the flag restores the full app.
+
+## Changing the bundle identifier
+
+The placeholder is `com.jyap.timecontrol`. For the free build you only need the app
+target's `PRODUCT_BUNDLE_IDENTIFIER` in `project.yml` to be unique to your Apple
+ID. For the full build, also keep the extension IDs prefixed by the app's ID and
+update `AppGroup.identifier` in `Shared/SharedConstants.swift` and the three
+`.entitlements` files to match.
 
 ---
 

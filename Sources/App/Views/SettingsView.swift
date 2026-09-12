@@ -32,6 +32,13 @@ struct SettingsView: View {
                     }
                 }
 
+                #if FREE_TIER
+                Section("Blocking") {
+                    Text("This is the free build — it can't block apps directly. Use the Shortcuts intervention (above) to get blocked-on-open behavior, or enroll in the paid Apple Developer Program for real in-app blocking.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+                #else
                 Section("Screen Time") {
                     HStack {
                         Label("Access", systemImage: "checkmark.shield")
@@ -40,6 +47,7 @@ struct SettingsView: View {
                             .foregroundStyle(auth.isAuthorized ? .green : .red)
                     }
                 }
+                #endif
 
                 Section("About") {
                     LabeledContent("App", value: "TimeControl")

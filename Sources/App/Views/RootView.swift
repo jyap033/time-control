@@ -6,11 +6,15 @@ struct RootView: View {
 
     var body: some View {
         Group {
+            #if FREE_TIER
+            MainTabView()
+            #else
             if auth.isAuthorized {
                 MainTabView()
             } else {
                 OnboardingView()
             }
+            #endif
         }
         .onChange(of: scenePhase) { phase in
             if phase == .active { auth.refresh() }
@@ -23,8 +27,10 @@ struct MainTabView: View {
         TabView {
             HomeView()
                 .tabItem { Label("Focus", systemImage: "hourglass") }
+            #if !FREE_TIER
             SchedulesView()
                 .tabItem { Label("Schedules", systemImage: "calendar") }
+            #endif
             StatsView()
                 .tabItem { Label("Stats", systemImage: "chart.bar.fill") }
             SettingsView()

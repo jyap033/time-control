@@ -1,19 +1,28 @@
 name: TimeControl
 
 # ─────────────────────────────────────────────────────────────────────────────
-# TimeControl — an Opal-style time-management / app-blocking app.
+# TimeControl — an Opal-style time-management app.
 #
-# This file is the source of truth for the Xcode project. Regenerate the
-# .xcodeproj on your Mac with:   xcodegen generate    (see README.md)
+# THIS IS THE FREE-TIER BUILD. It signs on a free "Personal Team" because it has
+# NO Family Controls entitlement, NO App Group, and NO app extensions — the parts
+# Apple only allows on a paid Developer account.
 #
-# CHANGE THESE THREE THINGS before building:
-#   1. DEVELOPMENT_TEAM below  -> your 10-char Apple Developer Team ID
-#   2. The bundle IDs (com.example.timecontrol...) -> your own reverse-domain id
-#   3. The App Group in the .entitlements files + Shared/SharedConstants.swift
+# It keeps: focus timer, guilt notifications, Shortcuts "open app -> intervention"
+# flow, and stats. It does NOT block apps in-app (that needs the paid tier).
+#
+# The full blocking build still lives in the repo behind the FREE_TIER flag — see
+# README "Upgrading to the full blocking build" to turn it back on after enrolling
+# in the Apple Developer Program.
+#
+# Regenerate the .xcodeproj on your Mac:   xcodegen generate   (or ./bootstrap.sh)
+#
+# CHANGE THESE before building:
+#   1. DEVELOPMENT_TEAM -> leave blank and pick your team in Xcode's UI, OR set it.
+#   2. PRODUCT_BUNDLE_IDENTIFIER -> must be unique to your Apple ID.
 # ─────────────────────────────────────────────────────────────────────────────
 
 options:
-  bundleIdPrefix: com.example
+  bundleIdPrefix: com.jyap
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true
@@ -25,7 +34,8 @@ settings:
     CURRENT_PROJECT_VERSION: "1"
     SWIFT_VERSION: "5.9"
     CODE_SIGN_STYLE: Automatic
-    # TODO: set your Apple Developer Team ID (Xcode > Settings > Accounts).
+    # Leave blank to pick your team in Xcode (Signing & Capabilities), or set the
+    # 10-character Team ID here.
     DEVELOPMENT_TEAM: ""
     TARGETED_DEVICE_FAMILY: "1"   # iPhone
     IPHONEOS_DEPLOYMENT_TARGET: "16.0"
@@ -40,57 +50,14 @@ targets:
       - Shared
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol
+        # Must be unique to your Apple ID. Change if signing says it's taken.
+        PRODUCT_BUNDLE_IDENTIFIER: com.jyap.timecontrol
         INFOPLIST_FILE: Sources/App/Info.plist
-        CODE_SIGN_ENTITLEMENTS: Sources/App/TimeControl.entitlements
         GENERATE_INFOPLIST_FILE: NO
         ENABLE_PREVIEWS: YES
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
-    dependencies:
-      - target: DeviceActivityMonitorExtension
-      - target: ShieldConfiguration
-      - target: ShieldAction
-
-  DeviceActivityMonitorExtension:
-    type: app-extension
-    platform: iOS
-    sources:
-      - Sources/Monitor
-      - Shared
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol.monitor
-        INFOPLIST_FILE: Sources/Monitor/Info.plist
-        CODE_SIGN_ENTITLEMENTS: Sources/Monitor/Monitor.entitlements
-        GENERATE_INFOPLIST_FILE: NO
-
-  ShieldConfiguration:
-    type: app-extension
-    platform: iOS
-    sources:
-      - path: Sources/Shield/ShieldConfigurationExtension.swift
-      - path: Sources/Shield/ShieldConfigInfo.plist
-        buildPhase: none
-      - Shared
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol.shieldconfig
-        INFOPLIST_FILE: Sources/Shield/ShieldConfigInfo.plist
-        CODE_SIGN_ENTITLEMENTS: Sources/Shield/Shield.entitlements
-        GENERATE_INFOPLIST_FILE: NO
-
-  ShieldAction:
-    type: app-extension
-    platform: iOS
-    sources:
-      - path: Sources/Shield/ShieldActionExtension.swift
-      - path: Sources/Shield/ShieldActionInfo.plist
-        buildPhase: none
-      - Shared
-    settings:
-      base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.example.timecontrol.shieldaction
-        INFOPLIST_FILE: Sources/Shield/ShieldActionInfo.plist
-        CODE_SIGN_ENTITLEMENTS: Sources/Shield/Shield.entitlements
-        GENERATE_INFOPLIST_FILE: NO
+        # Compiles out all Family Controls / ManagedSettings / DeviceActivity
+        # BEHAVIOR is still linked, but the FREE_TIER flag hides the auth gate and
+        # the blocking-only UI so the app is coherent without the entitlement.
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: FREE_TIER
