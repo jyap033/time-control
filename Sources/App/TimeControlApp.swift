@@ -20,10 +20,12 @@ struct TimeControlApp: App {
                         .environmentObject(intervention)
                 }
                 .onOpenURL { url in
-                    // e.g. timecontrol://intervene  (from a Shortcuts automation)
-                    if url.host == "intervene" || url.path.contains("intervene") {
-                        intervention.trigger()
-                    }
+                    // e.g. timecontrol://intervene?app=instagram  (Shortcuts automation)
+                    guard url.host == "intervene" || url.path.contains("intervene") else { return }
+                    let items = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems
+                    let app = items?.first { $0.name == "app" }?.value
+                    let raw = items?.first { $0.name == "url" }?.value
+                    intervention.handleIntervene(returnURL: AppLinks.resolve(app: app, rawURL: raw))
                 }
                 .task {
                     await nudges.refreshAuthorization()

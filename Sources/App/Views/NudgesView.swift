@@ -49,10 +49,19 @@ struct NudgesView: View {
             }
 
             Section("Block-on-open, without the paid account") {
-                Text("iOS can open TimeControl automatically when you launch a distracting app — no developer account needed — using a Shortcuts automation. TimeControl then throws up a full-screen intervention.")
+                Text("iOS can open TimeControl automatically when you launch a distracting app — no developer account needed — using a Shortcuts automation. TimeControl throws up a full-screen intervention; \"Continue anyway\" sends you back into the app with a short grace window.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
-                Text("Set it up: Shortcuts app → Automation → New → \"App\" → Is Opened → pick the apps → New Blank Automation → add \"Open URLs\" → enter timecontrol://intervene → turn off \"Ask Before Running\".")
+                Text("Make ONE automation per app: Shortcuts → Automation → New → \"App\" → Is Opened → pick ONE app → Run Immediately → New Blank Automation → \"Open URLs\" → enter the address below for that app.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("timecontrol://intervene?app=instagram").font(.footnote.monospaced())
+                    Text("timecontrol://intervene?app=tiktok").font(.footnote.monospaced())
+                    Text("timecontrol://intervene?app=youtube").font(.footnote.monospaced())
+                }
+                .foregroundStyle(.secondary)
+                Text("Built-in app names: instagram, tiktok, youtube, twitter/x, facebook, reddit, snapchat, netflix, twitch, linkedin, pinterest. For anything else use ?url=<its-scheme> (e.g. ?url=whatsapp://).")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             }

@@ -131,18 +131,29 @@ fires ordinary local notifications with rotating messages from
 
 **2. Opal-style "you opened it" intervention via Shortcuts.** A normal app can't see
 which app you open, but iOS **Shortcuts automations** can — for free. TimeControl
-listens on the `timecontrol://intervene` URL and, when opened that way, shows a
-full-screen intervention (with a 10-second delay on the "continue anyway" button).
+listens on `timecontrol://intervene?app=<name>` and, when opened that way, shows a
+full-screen intervention (10-second delay on "Continue anyway"). Choosing
+"Continue anyway" sends you back into the app and opens a 3-minute grace window so
+you aren't immediately re-trapped; "I'll stop" leaves you out.
 
-Set it up on your phone:
+Set it up on your phone — **one automation per app** (the URL names the app so
+TimeControl can return you to it):
 
 1. Open the **Shortcuts** app → **Automation** tab → **＋** → **App**.
-2. Choose **Is Opened**, pick the distracting apps (Instagram, TikTok, …), **Next**.
-3. **New Blank Automation** → add action **Open URLs** → enter `timecontrol://intervene`.
-4. Turn **off** *"Ask Before Running"* so it fires silently.
+2. Choose **Is Opened**, pick **one** app (e.g. Instagram), **Run Immediately**, **Next**.
+3. **New Blank Automation** → add action **Open URLs** → enter
+   `timecontrol://intervene?app=instagram`.
+4. Repeat for each app with its own name: `?app=tiktok`, `?app=youtube`, etc.
 
-Now opening a chosen app bounces you into TimeControl's guilt screen first. It's a
-speed bump, not a hard block — but that friction is most of what Opal's nudges do.
+Built-in names: `instagram, tiktok, youtube, twitter/x, facebook, reddit, snapchat,
+netflix, twitch, linkedin, pinterest`. For any other app use `?url=<its-scheme>`
+(e.g. `timecontrol://intervene?url=whatsapp://`).
+
+> **If you ever get stuck in a loop:** open **Shortcuts → Automation**, tap the
+> automation, and toggle **Enable This Automation** off (or delete it).
+
+It's a speed bump, not a hard block — but that friction is most of what Opal's
+nudges do.
 
 ---
 
